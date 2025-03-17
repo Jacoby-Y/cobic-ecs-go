@@ -6,10 +6,13 @@ cd path/to/my-projects
 mkdir my-game
 cd my-game
 go mod init my-game
-go get github.com/Jacoby-Y/cobic-ecs-go
+go get github.com/Jacoby-Y/cobic-ecs-go@main
 touch main.go
 # Write code in main.go
 go run main.go
+
+# To update the package
+go get -u github.com/Jacoby-Y/cobic-ecs-go@main
 ```
 
 ```go
