@@ -5,6 +5,8 @@ import (
 	"reflect"
 )
 
+var warnEmptyQuery = false
+
 type EntityContext struct {
 	EntityIndex     int
 	ComponentArrays map[reflect.Type][]Component
@@ -38,8 +40,9 @@ func (ctx *EntityContext) QueryListTypes(compTypes ...reflect.Type) [][]Componen
 		key := compType
 		storedComponents, exists := ctx.ComponentArrays[key]
 		if !exists {
-			fmt.Printf("QueryListTypes|Empty: %s %s\n", ctx.ComponentArrays, key)
-			fmt.Print("Make sure system function only take pointers to components!\n\n")
+			if !warnEmptyQuery {
+				emptyQueryWarning(ctx.ComponentArrays, key)
+			}
 			return make([][]Component, 0)
 		}
 
@@ -48,7 +51,7 @@ func (ctx *EntityContext) QueryListTypes(compTypes ...reflect.Type) [][]Componen
 	}
 
 	indexes := make(map[int]struct{})
-	indexes_started := false
+	indexesStarted := false
 
 	for _, compList := range result {
 		next_indexes := make(map[int]struct{})
@@ -56,8 +59,8 @@ func (ctx *EntityContext) QueryListTypes(compTypes ...reflect.Type) [][]Componen
 			next_indexes[comp.GetId()] = struct{}{}
 		}
 
-		if !indexes_started {
-			indexes_started = true
+		if !indexesStarted {
+			indexesStarted = true
 			indexes = next_indexes
 		} else {
 			indexes = intersectIndexes(indexes, next_indexes)
@@ -173,5 +176,17 @@ func intersectIndexes(setA, setB map[int]struct{}) map[int]struct{} {
 	return result
 }
 
-// reflect.New(val.Type().Elem()).Interface()
-// reflect.New(val.Type()).Elem().Interface()
+func emptyQueryWarning(arrays map[reflect.Type][]Component, key reflect.Type) {
+	warnEmptyQuery = true
+
+	keys := make([]reflect.Type, len(arrays))
+
+	i := 0
+	for k := range arrays {
+		keys[i] = k
+		i++
+	}
+
+	fmt.Printf("component_keys: %s\nbad_key: %s\n", keys, key)
+	fmt.Print("If it looks like the bad_key should match in component_keys, then you probably forgot to make all your system arguments pointers\n\n")
+}
