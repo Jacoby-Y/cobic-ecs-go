@@ -1,5 +1,17 @@
 ## Cobic (Coby's Epic) ECS in Go and Raylib
 
+To get started, run these commands (or similar commands for your OS)
+```bash
+cd path/to/my-projects
+mkdir my-game
+cd my-game
+go mod init my-game
+go get github.com/Jacoby-Y/cobic-ecs-go
+touch main.go
+# Write code in main.go
+go run main.go
+```
+
 ```go
 package main
 
