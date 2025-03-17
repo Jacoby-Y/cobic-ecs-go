@@ -101,6 +101,11 @@ func (ctx *EntityContext) QueryGroupsTypes(components ...reflect.Type) [][]Compo
 
 	// Step 1: Get the result as a map of component types to lists
 	lists := ctx.QueryListTypes(components...)
+
+	if len(lists) == 0 {
+		return make([][]Component, 0)
+	}
+
 	entities := len(lists[0])
 	result := make([][]Component, entities)
 
