@@ -27,6 +27,7 @@ func (ctx *EntityContext) AddEntity(components ...Component) {
 	}
 
 	ctx.EntityIndex++
+	ClearSystemCache()
 }
 
 func (ctx *EntityContext) QueryList(components ...Component) [][]Component {
